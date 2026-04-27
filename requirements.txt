@@ -1,5 +1,7 @@
-streamlit 
-langchain
-openai
 fastapi
+uvicorn
+streamlit
+requests
 pydantic
+python-dotenv
+ollama
