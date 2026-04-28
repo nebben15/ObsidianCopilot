@@ -15,33 +15,9 @@ class Message(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: List[Message]
-    model: str = "llama3.1:8b"
+    #model: str = "llama3.1:8b"
+    model: str = "qwen3.5:9b"
 
-@app.post("/chat")
-def chat(req: ChatRequest):
-    # naive way
-    # response = requests.post(
-    #     OLLAMA_URL,
-    #     json={
-    #         "model": req.model,
-    #         "prompt": req.prompt,
-    #         "stream": False
-    #     }
-    # )
-
-    # data = response.json()
-
-    # return {
-    #     "response": data["response"]
-    # }
-
-
-    # pythonic way (ollama sdk)
-    response = ollama.generate(
-        model=req.model,
-        prompt=req.prompt
-    )
-    return response
 
 @app.post("/chat-stream")
 def chat_stream(req: ChatRequest):
@@ -50,10 +26,38 @@ def chat_stream(req: ChatRequest):
         stream = ollama.chat(
             model = req.model,
             messages=req.messages,
-            stream=True
+            stream=True,
+            think=False
         )
 
         for chunk in stream:
             yield chunk["message"]["content"]
     
     return StreamingResponse(generate(), media_type="text/plain")
+
+
+# @app.post("/chat")
+# def chat(req: ChatRequest):
+#     # naive way
+#     # response = requests.post(
+#     #     OLLAMA_URL,
+#     #     json={
+#     #         "model": req.model,
+#     #         "prompt": req.prompt,
+#     #         "stream": False
+#     #     }
+#     # )
+
+#     # data = response.json()
+
+#     # return {
+#     #     "response": data["response"]
+#     # }
+
+
+#     # pythonic way (ollama sdk)
+#     response = ollama.generate(
+#         model=req.model,
+#         prompt=req.prompt
+#     )
+#     return response

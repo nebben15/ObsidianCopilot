@@ -1,6 +1,14 @@
 # Obsidian Copilot
 AI copilot for the Obisidian note taking app .
 
+This project is a work in progress:
+- basic local chatbot with web frontend
+- memory
+- RAG for Obisidian notes
+- Obisidian extension integration
+- hosted LLM API integration
+- agentic features
+
 
 ## First time setup
 Before running the copilot, create a python venv at the root of the repository:
