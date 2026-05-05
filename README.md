@@ -5,7 +5,7 @@ This project is a work in progress:
 - basic local chatbot with web frontend
 - memory
 - RAG for Obisidian notes
-- Obisidian extension integration
+- Obisidian extension 
 - hosted LLM API integration
 - agentic features
 

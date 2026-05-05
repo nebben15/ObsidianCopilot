@@ -5,3 +5,5 @@ requests
 pydantic
 python-dotenv
 ollama
+langchain
+langchain-ollama

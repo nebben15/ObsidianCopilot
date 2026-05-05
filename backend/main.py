@@ -1,63 +1,26 @@
+from __future__ import annotations
+
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import List
-import requests
-import ollama
 
-app =FastAPI()
+from backend.api.chat import router as chat_router
+from backend.chains.chain_registry import ChainRegistry
 
-# OLLAMA_URL = "http://localhost:11434/api/generate"
+# startup/shutdown hook -> build chain registry
+@asynccontextmanager
+async def lifespan(app: FastAPI): # async to allow await during startup
+	# start up
+	registry = ChainRegistry()
+	registry.initialize()
+	app.state.chain_registry = registry # add registry to app state (FastAPI app storage area)
+	yield
+	# shut down
 
-class Message(BaseModel):
-    role: str
-    content: str
-
-class ChatRequest(BaseModel):
-    messages: List[Message]
-    #model: str = "llama3.1:8b"
-    model: str = "qwen3.5:9b"
+app = FastAPI(title="Obsidian Copilot API", version="0.1.0", lifespan=lifespan)
+app.include_router(chat_router)
 
 
-@app.post("/chat-stream")
-def chat_stream(req: ChatRequest):
-    # stream generator
-    def generate():
-        stream = ollama.chat(
-            model = req.model,
-            messages=req.messages,
-            stream=True,
-            think=False
-        )
-
-        for chunk in stream:
-            yield chunk["message"]["content"]
-    
-    return StreamingResponse(generate(), media_type="text/plain")
-
-
-# @app.post("/chat")
-# def chat(req: ChatRequest):
-#     # naive way
-#     # response = requests.post(
-#     #     OLLAMA_URL,
-#     #     json={
-#     #         "model": req.model,
-#     #         "prompt": req.prompt,
-#     #         "stream": False
-#     #     }
-#     # )
-
-#     # data = response.json()
-
-#     # return {
-#     #     "response": data["response"]
-#     # }
-
-
-#     # pythonic way (ollama sdk)
-#     response = ollama.generate(
-#         model=req.model,
-#         prompt=req.prompt
-#     )
-#     return response
+@app.get("/health")
+def health() -> dict[str, str]:
+	return {"status": "ok"}
