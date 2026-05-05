@@ -2,11 +2,11 @@
 AI copilot for the Obisidian note taking app .
 
 This project is a work in progress:
-- basic local chatbot with web frontend
+- ✅ basic local chatbot with web frontend
 - memory
-- RAG for Obisidian notes
-- Obisidian extension 
-- hosted LLM API integration
+- RAG for Obsidian notes
+- LLM APIs integration
+- Obsidian extension 
 - agentic features
 
 
