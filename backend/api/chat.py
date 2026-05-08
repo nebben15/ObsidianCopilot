@@ -4,6 +4,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+import json
 
 # router for chat requests
 router = APIRouter(tags=["chat"])
@@ -38,6 +39,7 @@ async def chat_stream(req:ChatRequest, request:Request):
         for chunk in chain.stream(req.question):
             token = getattr(chunk, "content", str(chunk))
             # Server-sent event (SSE) format: "data: <content>\n\n", standard for server-to-client browser streaming
-            yield f"data: {token}\n\n"
+            # Use json encoding to make sure new lines are not dropped
+            yield f"data: {json.dumps({'token': token})}\n\n"
 
     return StreamingResponse(generate(), media_type="text/event-stream")

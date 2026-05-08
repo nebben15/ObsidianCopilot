@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import json
 
 API_URL = "http://localhost:8000"
 
@@ -24,9 +25,14 @@ if question:
 
         # stream response and update in real-time
         for line in response.iter_lines(decode_unicode=True): # synchronous streaming, returns bytes by default, use decode for strings
+            # skip SSE delimiter lines
+            if not line:
+                continue
             if line.startswith("data: "):
                 # strip data, add to answer, update ui
-                token = line[6:]
+                payload = line[6:]
+                data = json.loads(payload)
+                token = data.get("token", "")
                 full_answer += token
                 answer_placeholder.markdown(full_answer)
         
